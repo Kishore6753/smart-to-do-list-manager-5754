@@ -99,6 +99,13 @@ function CategoriesPanel() {
   const { categories, setCategories, loading, error, refresh } = useCategories();
   const [name, setName] = useState("");
   const [color, setColor] = useState("#E87A41");
+  const colorPresets = [
+    { label: "Orange", value: "#E87A41" },
+    { label: "Blue", value: "#2563EB" },
+    { label: "Green", value: "#059669" },
+    { label: "Purple", value: "#7C3AED" },
+    { label: "Gray", value: "#6B7280" },
+  ];
 
   const addCategory = async (e) => {
     e.preventDefault();
@@ -135,6 +142,20 @@ function CategoriesPanel() {
             onChange={(e) => setName(e.target.value)}
             aria-label="Category name"
           />
+          <select
+            className="select"
+            value={color}
+            onChange={(e) => setColor(e.target.value)}
+            aria-label="Preset color"
+            title="Choose a preset color"
+            style={{ minWidth: 140 }}
+          >
+            {colorPresets.map((p) => (
+              <option value={p.value} key={p.value}>
+                {p.label}
+              </option>
+            ))}
+          </select>
           <input
             className="input"
             type="color"
@@ -234,8 +255,26 @@ function TasksPanel() {
   }, [filterCategory, onlyActive]);
 
   const onSubmitNew = async (payload) => {
-    const created = await TasksAPI.create(payload);
-    setTasks((prev) => [created, ...prev]);
+    // Ensure category_id is numeric if present to satisfy backend validation
+    const normalized = {
+      ...payload,
+      category_id:
+        payload.category_id !== undefined && payload.category_id !== ""
+          ? Number(payload.category_id)
+          : undefined,
+    };
+    const created = await TasksAPI.create(normalized);
+    // Some backends may not include all computed fields; fetch latest list for consistency
+    try {
+      // Optimistically prepend created item if it has an id
+      if (created && (created.id ?? created._id)) {
+        setTasks((prev) => [created, ...prev]);
+      } else {
+        await fetchTasks();
+      }
+    } catch {
+      await fetchTasks();
+    }
   };
 
   const onUpdate = async (id, payload) => {
@@ -450,7 +489,8 @@ function TaskForm({ categories, onSubmit }) {
     const payload = {
       title: title.trim(),
       description: description.trim() || undefined,
-      category_id: categoryId || undefined,
+      // Coerce category to number if selected
+      category_id: categoryId ? Number(categoryId) : undefined,
       due_date: due || undefined,
       reminder_at: reminder || undefined,
       completed: false,
