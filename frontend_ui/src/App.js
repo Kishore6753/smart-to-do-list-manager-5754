@@ -28,25 +28,25 @@ export default function App() {
 
   return (
     <div className="App">
-      <nav className="navbar">
-        <div className="brand">Smart To-Do</div>
+      <header className="app-navbar">
+        <div className="app-brand">Smart To-Do</div>
         <button
           className="theme-toggle"
-          onClick={() =>
-            setTheme((t) => (t === "light" ? "dark" : "light"))
-          }
+          onClick={() => setTheme((t) => (t === "light" ? "dark" : "light"))}
           aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+          data-action="toggle-theme"
+          data-label="auto"
         >
           {theme === "light" ? "🌙 Dark" : "☀️ Light"}
         </button>
-      </nav>
+      </header>
 
       <div className="container">
-        <div className="grid">
-          <aside className="card">
+        <div className="app-grid">
+          <aside className="card" aria-label="Sidebar - Categories">
             <CategoriesPanel />
           </aside>
-          <main className="card">
+          <main className="card" aria-label="Main - Tasks">
             <TasksPanel />
           </main>
         </div>
