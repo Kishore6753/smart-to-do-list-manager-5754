@@ -1,1 +1,3 @@
-# smart-to-do-list-manager-5754
+# Project Repository
+
+This is the initial README file for the project.
