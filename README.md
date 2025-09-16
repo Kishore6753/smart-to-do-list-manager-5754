@@ -14,3 +14,6 @@ Quick start for frontend:
 4. Optional: create .env with VITE_BACKEND_URL=http://localhost:3001
 
 For more details see frontend_ui/README.md.
+
+Housekeeping:
+- All Figma design files and references (figmafiles/, temp-attachments/ JSONs, and assets/figmaimages/) have been removed from the repository as part of design asset cleanup.
