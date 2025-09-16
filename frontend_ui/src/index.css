@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom focus ring for accessibility */
+:root {
+  --ring: 2px solid rgba(25, 118, 210, 0.6);
+}
+*:focus-visible {
+  outline: var(--ring);
+  outline-offset: 2px;
+}
+
+/* Smooth transitions for theme */
+html {
+  color-scheme: light dark;
+}
+body, .theme-transition {
+  transition-property: background-color, color, border-color, fill, stroke;
+  transition-duration: 200ms;
+  transition-timing-function: ease-in-out;
+}
+
+/* Card hover */
+.card-hover {
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+}
+
+/* Enter/exit animations */
+.fade-enter { opacity: 0; transform: translateY(6px); }
+.fade-enter-active { opacity: 1; transform: translateY(0); transition: opacity 150ms ease, transform 150ms ease; }
+.fade-exit { opacity: 1; }
+.fade-exit-active { opacity: 0; transform: translateY(-4px); transition: opacity 120ms ease, transform 120ms ease; }
+```
+
+Explanation: App entry point wiring React DOM and providing ThemeProvider and store hydration from localStorage.
+````write file="smart-to-do-list-manager-5754/frontend_ui/src/main.tsx"
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './index.css';
+import App from './App';
+import { ThemeProvider } from './theme/ThemeProvider';
+import { hydrateFromStorage } from './store/useTasksStore';
+
+// Hydrate tasks from localStorage on initial load before rendering
+hydrateFromStorage();
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <ThemeProvider>
+      <App />
+    </ThemeProvider>
+  </React.StrictMode>
+);
